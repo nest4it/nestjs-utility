@@ -32,7 +32,6 @@
     "email": "hello@n4it.nl"
   },
   "license": "GPL-3.0",
-  "dependencies": {},
   "peerDependencies": {
     "@nestjs/common": "^10",
     "@nestjs/core": "^10"

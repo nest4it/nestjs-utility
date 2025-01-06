@@ -33,7 +33,6 @@
     "email": "hello@n4it.nl"
   },
   "license": "ISC",
-  "devDependencies": {},
   "dependencies": {
     "@sendgrid/mail": "^8.1.3"
   },

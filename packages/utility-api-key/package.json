@@ -34,9 +34,8 @@
     "email": "info@n4it.nl"
   },
   "license": "GPL-3.0",
-  "devDependencies": {},
   "dependencies": {
-    "@nestjs/passport": "^10.0.3",
+    "@nestjs/passport": "10.0.3",
     "jsonwebtoken": "9.0.2",
     "passport-headerapikey": "1.2.2"
   },
