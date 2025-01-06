@@ -12,7 +12,7 @@
 <br />
 
 <div align="center">
-  <a href="https://github.com/nest4it/nestjs-utility/blob/master/LICENSE">
+  <a href="https://github.com/nest4it/nestjs-utility/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/nest4it/nestjs-utility.svg" alt="License" />
   </a>
   <a href="https://renovatebot.com/">
