@@ -21,3 +21,5 @@ lerna-debug.log
 packages/**/lib
 packages/**/tsconfig.tsbuildinfo
 .env
+
+**/dist
