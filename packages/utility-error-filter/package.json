@@ -1,6 +1,6 @@
 {
   "name": "@n4it/utility-error-filter",
-  "version": "1.0.7-alpha.2",
+  "version": "1.0.7-alpha.3",
   "description": "Better error handling for NestJS",
   "main": "./dist/index.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "@slack/webhook": "^7.0.4"
   },
   "dependencies": {
-    "@n4it/utility-slack-alerts": "^1.0.7-alpha.2"
+    "@n4it/utility-slack-alerts": "^1.0.7-alpha.3"
   },
   "peerDependencies": {
     "@nestjs/common": "^10",

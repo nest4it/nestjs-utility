@@ -1,6 +1,6 @@
 {
   "name": "@n4it/utility-sendgrid",
-  "version": "1.0.7-alpha.2",
+  "version": "1.0.7-alpha.3",
   "description": "Package to manage emails on an event-driven way using NestJS and SendGrid.",
   "main": "./dist/index.js",
   "scripts": {
