@@ -1,0 +1,43 @@
+{
+  "name": "@n4it/utility-slack-alerts",
+  "version": "1.0.0",
+  "description": "Sending Slack alerts from NestJS",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "url": "https://github.com/nest4it/nestjs-utility"
+  },
+  "files": [
+    "./dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "nestjs",
+    "nest",
+    "alerts",
+    "n4it",
+    "slack",
+    "utilities"
+  ],
+  "author": "Robert-Jan Kuyper <hello@n4it.nl> (https://n4it.nl)",
+  "bugs": {
+    "url": "https://github.com/nest4it/nestjs-utility/issues",
+    "email": "hello@n4it.nl"
+  },
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@slack/webhook": "^7.0.4",
+    "slack-block-builder": "^2.8.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^10",
+    "@nestjs/core": "^10"
+  }
+}

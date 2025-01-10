@@ -1,4 +1,4 @@
-import { ArgumentsHost, HttpException } from "@nestjs/common";
+import type { ArgumentsHost, HttpException } from '@nestjs/common';
 
 export type ErrorInterceptorModuleConfig = {
   /**
@@ -19,10 +19,13 @@ export type ErrorInterceptorModuleConfig = {
 
   /**
    * A function that is called when an unauthorized exception is thrown.
-   * 
+   *
    * @param exception Defines the base Nest HTTP exception, which is handled by the default Exceptions Handler.
    * @param host Provides methods for retrieving the arguments being passed to a handler. Allows choosing the appropriate execution context (e.g., Http, RPC, or WebSockets) to retrieve the arguments from.
    * @returns Promise<void> | void
    */
-  onUnauthorized?: (exception: HttpException, host: ArgumentsHost) => Promise<void> | void;
+  onUnauthorized?: (
+    exception: HttpException,
+    host: ArgumentsHost,
+  ) => Promise<void> | void;
 };

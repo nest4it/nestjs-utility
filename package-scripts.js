@@ -1,7 +1,12 @@
 const utils = require('nps-utils');
 
 const getSeries = (args) => utils.series.nps(...args);
-const names = ['utility-api-key', 'utility-error-filter', 'utility-sendgrid'];
+const names = [
+  'utility-api-key',
+  'utility-error-filter',
+  'utility-sendgrid',
+  'utility-slack-alerts',
+];
 
 const getBuildCmd = (pkg) => {
   const str = 'npx lerna run build';

@@ -1,15 +1,13 @@
-import { ArgumentsHost, HttpException } from "@nestjs/common";
+import { ArgumentsHost, HttpException } from '@nestjs/common';
 
 export type ExceptionObj = ReturnType<typeof createExceptionObj>;
 
-export const isString = (value: unknown): value is string =>
-  typeof value === "string";
+export const isString = (value: unknown): value is string => typeof value === 'string';
 
-export const isArray = (value: unknown): value is unknown[] =>
-  Array.isArray(value);
+export const isArray = (value: unknown): value is unknown[] => Array.isArray(value);
 
 export const isObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
+  typeof value === 'object' && value !== null;
 
 export const getErrorResponse = (exception: HttpException | Error) => {
   if (!(exception instanceof HttpException)) {
@@ -26,15 +24,17 @@ export const getErrorResponse = (exception: HttpException | Error) => {
     return exResponse.message || exResponse.error;
   }
 
-  return "Internal Server Error";
+  return 'Internal Server Error';
 };
 
 export const getStatus = (exception: HttpException | Error) =>
-  exception instanceof HttpException
-    ? exception.getStatus()
-    : 500;
+  exception instanceof HttpException ? exception.getStatus() : 500;
 
-export const createExceptionObj = (exception: HttpException | Error, host: ArgumentsHost, customErrorToStatusCodeMap: Map<string, number>) => {
+export const createExceptionObj = (
+  exception: HttpException | Error,
+  host: ArgumentsHost,
+  customErrorToStatusCodeMap: Map<string, number>,
+) => {
   const ctx = host.switchToHttp();
   const response = ctx.getResponse();
   const request = ctx.getRequest();
@@ -45,14 +45,18 @@ export const createExceptionObj = (exception: HttpException | Error, host: Argum
     time: new Date().toISOString(),
     path: request.path,
     method: request.method,
-    message: getErrorResponse(exception) ?? "Internal Server Error",
+    message: getErrorResponse(exception) ?? 'Internal Server Error',
     error: response.error,
-    status: customErrorToStatusCodeMap.get(exception.name) ?? getStatus(exception) ?? response.statusCode ?? 500,
+    status:
+      customErrorToStatusCodeMap.get(exception.name) ??
+      getStatus(exception) ??
+      response.statusCode ??
+      500,
 
     stack: JSON.stringify(stack ? { stack } : {}),
     res: response,
-  }
-}
+  };
+};
 
 export const toExceptionResponse = (err: ExceptionObj) => ({
   path: err.path,
@@ -61,21 +65,24 @@ export const toExceptionResponse = (err: ExceptionObj) => ({
   message: err.message,
   error: err.res.error,
   time: err.time,
-})
+});
 
 export const isRecoverable = (err: ExceptionObj) => err.status < 500;
 export const isInternalError = (err: ExceptionObj) => err.status >= 500;
 
-export const createLogLine = (err: ExceptionObj, severity: string): [
+export const createLogLine = (
+  err: ExceptionObj,
+  severity: string,
+): [
   unknown,
   string,
   {
-    method: string,
-    path: string,
-    status: number,
-    stack: string,
-    severity: string,
-  }
+    method: string;
+    path: string;
+    status: number;
+    stack: string;
+    severity: string;
+  },
 ] => [
   err.message,
   err.stack,
@@ -85,5 +92,5 @@ export const createLogLine = (err: ExceptionObj, severity: string): [
     status: err.status,
     stack: err.stack,
     severity,
-  }
+  },
 ];
