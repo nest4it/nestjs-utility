@@ -3,7 +3,7 @@
     "packages/*"
   ],
   "npmClient": "yarn",
-  "version": "1.0.7-alpha.3",
+  "version": "1.0.7-alpha.5",
   "command": {
     "publish": {
       "message": "chore: release"

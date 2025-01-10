@@ -1,6 +1,6 @@
 {
   "name": "@n4it/utility-api-key",
-  "version": "1.0.7-alpha.3",
+  "version": "1.0.7-alpha.5",
   "description": "Package to manage API Keys in NestJS.",
   "main": "./dist/index.js",
   "scripts": {
