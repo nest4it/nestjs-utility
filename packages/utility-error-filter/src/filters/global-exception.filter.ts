@@ -18,7 +18,9 @@ import {
   isInternalError,
 } from './utils';
 import { HttpAdapterHost } from '@nestjs/core';
-import { SlackAlertService } from '@n4it/utility-slack-alerts';
+import { IncomingWebhook } from '@slack/webhook';
+import { SLACK_CLIENT } from '../constants';
+import { createErrorAlert, createFailureAlert } from './utils/alerts';
 
 @Injectable()
 @Catch()
@@ -27,7 +29,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   constructor(
     @Inject(MODULE_OPTIONS_TOKEN) private options: ErrorInterceptorModuleConfig,
-    private readonly slackAlertService: SlackAlertService,
+    @Inject(SLACK_CLIENT) private client: IncomingWebhook,
     private readonly httpAdapterHost: HttpAdapterHost,
   ) {}
 
@@ -49,9 +51,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.logger.warn(...createLogLine(err, 'WARNING'));
 
       if (this.options.slackWebhook) {
-        await this.slackAlertService.sendFailureAlert({
-          message: err.message as string,
-        });
+        await this.client.send(createFailureAlert(err));
       }
     }
 
@@ -61,9 +61,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.logger.error(...createLogLine(err, 'ERROR'));
 
       if (this.options.slackWebhook) {
-        await this.slackAlertService.sendErrorAlert({
-          message: err.message as string,
-        });
+        await this.client.send(createErrorAlert(err));
       }
     }
 
