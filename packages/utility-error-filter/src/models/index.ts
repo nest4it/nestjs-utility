@@ -1,4 +1,17 @@
 import type { ArgumentsHost, HttpException } from '@nestjs/common';
+import type { IncomingWebhookDefaultArguments } from '@slack/webhook';
+
+export type SlackWebhookConfig = {
+  /**
+   * The URL of the Slack webhook.
+   */
+  url: string;
+
+  /**
+   * The default arguments for the Slack webhook.
+   */
+  options?: IncomingWebhookDefaultArguments;
+};
 
 export type ErrorInterceptorModuleConfig = {
   /**
@@ -16,6 +29,11 @@ export type ErrorInterceptorModuleConfig = {
    * A flag that indicates whether failures should be logged.
    */
   logFailures?: boolean;
+
+  /**
+   * A configuration object for the Slack webhook.
+   */
+  slackWebhook?: SlackWebhookConfig;
 
   /**
    * A function that is called when an unauthorized exception is thrown.

@@ -18,6 +18,7 @@ import {
   isInternalError,
 } from './utils';
 import { HttpAdapterHost } from '@nestjs/core';
+import { SlackAlertService } from '@n4it/utility-slack-alerts';
 
 @Injectable()
 @Catch()
@@ -26,6 +27,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   constructor(
     @Inject(MODULE_OPTIONS_TOKEN) private options: ErrorInterceptorModuleConfig,
+    private readonly slackAlertService: SlackAlertService,
     private readonly httpAdapterHost: HttpAdapterHost,
   ) {}
 
@@ -45,12 +47,24 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // they are recoverable by user input
     if (isRecoverable(err) && this.options.logFailures) {
       this.logger.warn(...createLogLine(err, 'WARNING'));
+
+      if (this.options.slackWebhook) {
+        await this.slackAlertService.sendFailureAlert({
+          message: err.message as string,
+        });
+      }
     }
 
     // internal exceptions are considered errors
     // they are not recoverable by user input
     if (isInternalError(err) && this.options.logErrors) {
       this.logger.error(...createLogLine(err, 'ERROR'));
+
+      if (this.options.slackWebhook) {
+        await this.slackAlertService.sendErrorAlert({
+          message: err.message as string,
+        });
+      }
     }
 
     httpAdapter.reply(err.res, toExceptionResponse(err), err.status);

@@ -75,6 +75,25 @@ import { Module, ArgumentsHost, HttpException } from "@nestjs/common";
 export class AppModule {}
 ```
 
+### Configuring Slack Alerts
+You can extend the module to send alerts to slack.
+
+```typescript
+import { ErrorInterceptorModule } from "@n4it/utility-error-filter";
+import { Module, ArgumentsHost, HttpException } from "@nestjs/common";
+
+@Module({
+  imports: [
+    ErrorInterceptorModule.register({
+      slackWebhook: {
+        url: "https://hooks.slack.com/services/XXXXXXX/XXXXXX/XXXXXX"
+      }
+    }),
+  ],
+})
+export class AppModule {}
+```
+
 ## License
 This project is licensed under the GNU General Public License v3.0 - see the LICENSE file for details.
 

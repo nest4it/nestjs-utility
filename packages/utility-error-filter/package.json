@@ -32,6 +32,12 @@
     "email": "hello@n4it.nl"
   },
   "license": "GPL-3.0",
+  "devDependencies": {
+    "@slack/webhook": "^7.0.4"
+  },
+  "dependencies": {
+    "@n4it/utility-slack-alerts": "^1.0.2"
+  },
   "peerDependencies": {
     "@nestjs/common": "^10",
     "@nestjs/core": "^10"
