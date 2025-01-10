@@ -34,7 +34,16 @@ export type SendGridEmailModuleConfig = {
   /**
    * Event handlers for email events.
    */
-  onEventStart?: (event: EmailEventStart, opts?: SendGridEmailModuleConfig) => Promise<void>;
-  onEventError?: (event: EmailEventError, opts?: SendGridEmailModuleConfig) => Promise<void>;
-  onEventReady?: (event: EmailEventReady, opts?: SendGridEmailModuleConfig) => Promise<void>;
+  onEventStart?: (
+    event: EmailEventStart,
+    opts?: SendGridEmailModuleConfig,
+  ) => Promise<void>;
+  onEventError?: (
+    event: EmailEventError,
+    opts?: SendGridEmailModuleConfig,
+  ) => Promise<void>;
+  onEventReady?: (
+    event: EmailEventReady,
+    opts?: SendGridEmailModuleConfig,
+  ) => Promise<void>;
 };

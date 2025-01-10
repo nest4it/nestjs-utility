@@ -1,12 +1,12 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
-import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
-import type { SendGridEmailModuleConfig } from "../models";
-import type { EmailEventError, EmailEventReady, EmailEventStart } from "../models/events";
+import type { SendGridEmailModuleConfig } from '../models';
+import type { EmailEventError, EmailEventReady, EmailEventStart } from '../models/events';
 
-import { MODULE_OPTIONS_TOKEN } from "../sendgrid-email.configure-module";
-import { EMAIL_SEND_START, EMAIL_SEND_ERROR, EMAIL_SEND_READY } from "../constants";
-import { exponentialBackoff, sendEmail } from "./utils";
+import { MODULE_OPTIONS_TOKEN } from '../sendgrid-email.configure-module';
+import { EMAIL_SEND_START, EMAIL_SEND_ERROR, EMAIL_SEND_READY } from '../constants';
+import { exponentialBackoff, sendEmail } from './utils';
 
 @Injectable()
 export class EmailSubscriberService {
@@ -43,32 +43,35 @@ export class EmailSubscriberService {
     try {
       if (!this.options.exponentialBackoff) {
         if (this.options.logErrors) {
-          this.logger.error("Failed to send email", evt.error.stack);
+          this.logger.error('Failed to send email', evt.error.stack);
         }
-  
+
         return await this.options.onEventError?.(evt, this.options);
       }
 
       if (evt.opts.retries >= this.options.exponentialBackoff.maxRetries) {
         if (this.options.logErrors) {
-          this.logger.error("Failed to send email", evt.error.stack);
+          this.logger.error('Failed to send email', evt.error.stack);
         }
 
         return await this.options.onEventError?.(evt, this.options);
       }
 
-      return exponentialBackoff(this.options.exponentialBackoff.baseDelayMs, evt.opts.retries).then(() =>
+      return exponentialBackoff(
+        this.options.exponentialBackoff.baseDelayMs,
+        evt.opts.retries,
+      ).then(() =>
         this.eventEmitter.emit(EMAIL_SEND_START, {
           ...evt,
           data: {
             ...evt.data,
             retries: evt.opts.retries + 1,
           },
-        })
+        }),
       );
     } catch (error) {
       if (this.options.logErrors) {
-        this.logger.error("Failed to handle sending emails error", error.stack);
+        this.logger.error('Failed to handle sending emails error', error.stack);
       }
     }
   }
