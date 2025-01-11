@@ -1,10 +1,14 @@
-import type { SlackWebhookConfig } from './models';
+import type { ErrorInterceptorModuleConfig } from './models';
 import { MODULE_OPTIONS_TOKEN } from './error-interceptor.configure-module';
 import { SLACK_CLIENT } from './constants';
 import { IncomingWebhook } from '@slack/webhook';
 
-export const createSlackClient = async (options: SlackWebhookConfig) => {
-  return new IncomingWebhook(options.url, options.options);
+export const createSlackClient = async (options: ErrorInterceptorModuleConfig) => {
+  if (!options.slackWebhook?.url) {
+    return null;
+  }
+
+  return new IncomingWebhook(options.slackWebhook.url, options.slackWebhook.options);
 };
 
 export const createProviders = () => [
