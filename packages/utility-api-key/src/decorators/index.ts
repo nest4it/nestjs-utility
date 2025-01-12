@@ -1,8 +1,5 @@
-import type { AuthenticatedClient } from "../models/authenticated-client";
-import {
-  createParamDecorator,
-  type ExecutionContext,
-} from "@nestjs/common";
+import type { AuthenticatedClient } from '../models/authenticated-client';
+import { createParamDecorator, type ExecutionContext } from '@nestjs/common';
 
 export const ApiKeyClient = createParamDecorator(
   (_: unknown, ctx: ExecutionContext): AuthenticatedClient => {

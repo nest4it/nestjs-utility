@@ -1,5 +1,5 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
-import { ErrorInterceptorModuleConfig } from './models';
+import type { ErrorInterceptorModuleConfig } from './models';
 
 export const {
   ConfigurableModuleClass,

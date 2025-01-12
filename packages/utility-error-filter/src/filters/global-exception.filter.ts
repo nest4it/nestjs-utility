@@ -51,7 +51,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.logger.warn(...createLogLine(err, 'WARNING'));
 
       if (this.options.slackWebhook) {
-        await this.client.send(createFailureAlert(err)).catch();
+        await this.client.send(createFailureAlert(err)).catch(() => null);
       }
     }
 
@@ -61,7 +61,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.logger.error(...createLogLine(err, 'ERROR'));
 
       if (this.options.slackWebhook) {
-        await this.client.send(createErrorAlert(err)).catch();
+        await this.client.send(createErrorAlert(err)).catch(() => null);
       }
     }
 
