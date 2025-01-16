@@ -1,4 +1,4 @@
-import { ApiKeyValidationError } from "../errors";
+import { ApiKeyValidationError } from '../errors';
 
 export type AuthenticatedClient<T = Record<string, unknown>> = T & {
   exp: number;
@@ -14,7 +14,9 @@ export const isNumber = (value: unknown): value is number => typeof value === 'n
 export const isNonEmptyString = (value: unknown): value is string =>
   typeof value === 'string' && value !== '';
 
-export const validateAuthenticatedClient = <T>(client: unknown): AuthenticatedClient<T> => {
+export const validateAuthenticatedClient = <T>(
+  client: unknown,
+): AuthenticatedClient<T> => {
   if (!isObject(client)) {
     throw new ApiKeyValidationError('Invalid token');
   }
@@ -32,4 +34,4 @@ export const validateAuthenticatedClient = <T>(client: unknown): AuthenticatedCl
   }
 
   return client as AuthenticatedClient<T>;
-}
+};
