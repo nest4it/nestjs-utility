@@ -29,26 +29,6 @@ import { Module } from "@nestjs/common";
 export class AppModule {}
 ```
 
-### Generating API Tokens
-To generate an API token, inject the ApiKeyService into your service and use the createApiKey method. This method allows you to associate policies with the generated token.
-
-```typescript
-import { ApiKeyService } from "@n4it/utility-api-key";
-import { Injectable } from "@nestjs/common";
-
-@Injectable()
-export class AppService {
-  constructor(private readonly apiKeyService: ApiKeyService) {}
-
-  public createToken() {
-    return this.apiKeyService.createApiKey({
-      policies: ["user:manage"],  // Define your custom claims here
-      role: "admin"
-    });
-  }
-}
-```
-
 ### Using the API Key Strategy in Guards
 To protect routes using the generated API keys, you can use the `API_KEY_MODULE_STRATEGY` with NestJS's AuthGuard. This guard will automatically validate incoming requests against the configured API key strategy.
 
@@ -64,29 +44,6 @@ export class AuthGuard extends PassportAuthGuard([
 ]) {
   canActivate(context: ExecutionContext) {
     return super.canActivate(context);
-  }
-}
-```
-
-### Using the ApiKeyClient Decorator
-The module also provides a convenient `ApiKeyClient` decorator. This decorator can be used in your controllers to directly inject the parsed JWT token as an `AuthenticatedClient` object. This makes it easy to access the details of the authenticated client in your route handlers.
-
-You can import both `ApiKeyClient` and `AuthenticatedClient`:
-
-```typescript
-import { Controller, Get } from "@nestjs/common";
-import { ApiKeyClient, AuthenticatedClient } from "@n4it/utility-api-key";
-
-@Controller('user')
-export class UserController {
-  @Get('profile')
-  getUserProfile(@ApiKeyClient() client: AuthenticatedClient) {
-    // Access client details from the parsed JWT token
-    // possibly validate the policies
-    return {
-      userId: client.userId,
-      policies: client.policies,
-    };
   }
 }
 ```
