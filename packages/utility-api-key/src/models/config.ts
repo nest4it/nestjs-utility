@@ -1,5 +1,4 @@
 export type ApiKeyModuleConfig = {
-
   /**
    * The secret to use to sign the JWT.
    */

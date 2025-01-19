@@ -22,9 +22,18 @@ describe('ErrorInterceptorModule', () => {
   });
 
   it(`/GET cats`, () => {
-    return request(app.getHttpServer()).get('/cats').expect(500).expect({
-      status: 500,
-    });
+    return request(app.getHttpServer())
+      .get('/cats')
+      .expect(500)
+      .expect((res) => {
+        expect(res.body).toEqual({
+          path: '/cats',
+          method: 'GET',
+          status: 500,
+          message: 'FakeController',
+          time: expect.any(String),
+        });
+      });
   });
 
   afterAll(async () => {
