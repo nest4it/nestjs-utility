@@ -7,7 +7,6 @@ import { FakeUserController } from './mocks/fake-key-client.controller'; // adju
 describe('ApiKeyClient Integration', () => {
   let app: INestApplication;
   let apiKeyService: ApiKeyService;
-  // let token: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -39,13 +38,11 @@ describe('ApiKeyClient Integration', () => {
       '1h',
     );
 
-    // 2. Make a GET request with the Bearer token
     return request(app.getHttpServer())
       .get('/profile')
       .set('x-api-key', `v1 ${token}`)
       .expect(200)
       .expect((res) => {
-        // console.log(res.body);
         expect(res.body.userId).toBeDefined();
         expect(res.body.role).toBe('admin');
         expect(res.body.policies).toContain('user:manage');
