@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { FakeController } from './mocks/strategy-fake-module';
+import { FakeController } from './mocks/strategy-fake.controller';
 import { ApiKeyModule } from '../../src/api-key.module';
 import { ApiKeyService } from '../../src/api-key.service';
 
