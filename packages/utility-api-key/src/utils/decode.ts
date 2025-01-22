@@ -13,13 +13,21 @@ export const isJwtTokenExpired = (token: AuthenticatedClient) =>
   token.exp < getCurrentTimeInSeconds();
 
 export const createVerifyJwtToken = (secret: string) => async (token: string) => {
-  const payload = verify(token, secret, { ignoreExpiration: false });
+  try {
+    const payload = verify(token, secret, { ignoreExpiration: true });
 
-  const parsedToken = validateAuthenticatedClient<AuthenticatedClient>(payload);
+    const parsedToken = validateAuthenticatedClient<AuthenticatedClient>(payload);
 
-  if (isJwtTokenExpired(parsedToken)) {
-    throw new ApiKeyExpiredError('Token has expired');
+    if (isJwtTokenExpired(parsedToken)) {
+      throw new ApiKeyExpiredError('Token has expired');
+    }
+
+    return parsedToken;
+  } catch (error) {
+    if (error.message === 'Token has expired') {
+      throw new ApiKeyExpiredError('Token has expired');
+    }
+
+    throw new ApiKeyExpiredError('Token is invalid or malformed.');
   }
-
-  return parsedToken;
 };

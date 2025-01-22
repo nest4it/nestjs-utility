@@ -1,5 +1,5 @@
 import { createVerifyJwtToken } from '../../src/utils/decode';
-import { JsonWebTokenError, sign } from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
 
 describe('create a verify jwt token', () => {
   it('should verify a valid token successfully', async () => {
@@ -36,7 +36,7 @@ describe('createVerifyJwtToken - Expired Token', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    await expect(verifyJwtToken(token)).rejects.toThrow('jwt expired');
+    await expect(verifyJwtToken(token)).rejects.toThrow('Token has expired');
   });
 });
 
@@ -49,6 +49,6 @@ describe('createVerifyJwtToken - Invalid Token', () => {
       expiresIn: '1h',
     });
 
-    await expect(verifyJwtToken(token)).rejects.toThrow(JsonWebTokenError);
+    await expect(verifyJwtToken(token)).rejects.toThrow('Token is invalid or malformed.');
   });
 });
