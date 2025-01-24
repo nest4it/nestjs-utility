@@ -1,4 +1,4 @@
-import { ArgumentsHost, HttpException } from '@nestjs/common';
+import { type ArgumentsHost, HttpException } from '@nestjs/common';
 
 export type ExceptionObj = ReturnType<typeof createExceptionObj>;
 
