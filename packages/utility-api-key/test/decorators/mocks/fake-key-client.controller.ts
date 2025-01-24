@@ -1,5 +1,3 @@
-// user.controller.ts
-
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiKeyClient } from '../../../src/decorators/index';
 import { AuthenticatedClient } from '../../../src/models/authenticated-client';

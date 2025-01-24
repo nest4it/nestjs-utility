@@ -3,7 +3,7 @@ import {
   validateAuthenticatedClient,
   type AuthenticatedClient,
 } from '../models/authenticated-client';
-import { ApiKeyExpiredError } from '../errors';
+import { ApiKeyExpiredError, ApiKeyValidationError } from '../errors';
 
 export const toSeconds = (time: number) => Math.floor(time / 1000);
 
@@ -28,6 +28,6 @@ export const createVerifyJwtToken = (secret: string) => async (token: string) =>
       throw new ApiKeyExpiredError('Token has expired');
     }
 
-    throw new ApiKeyExpiredError('Token is invalid or malformed.');
+    throw new ApiKeyValidationError('Token is invalid or malformed.');
   }
 };
