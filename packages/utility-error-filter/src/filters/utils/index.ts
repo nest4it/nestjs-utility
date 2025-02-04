@@ -46,7 +46,7 @@ export const createExceptionObj = (
     path: request.path,
     method: request.method,
     message: getErrorResponse(exception) ?? 'Internal Server Error',
-    correlationId: null,
+    stored_information: null,
     error: response.error,
     status:
       customErrorToStatusCodeMap.get(exception.name) ??
@@ -81,7 +81,7 @@ export const createLogLine = (
     method: string;
     path: string;
     status: number;
-    correlationId: string | null;
+    stored_information: any | null;
     stack: string;
     severity: string;
   },
@@ -92,7 +92,7 @@ export const createLogLine = (
     method: err.method,
     path: err.path,
     status: err.status,
-    correlationId: err.correlationId,
+    stored_information: err.stored_information,
     stack: err.stack,
     severity,
   },
