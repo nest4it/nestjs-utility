@@ -22,30 +22,50 @@ describe('ErrorInterceptorModule', () => {
     await app.init();
   });
 
-  it(`should generate a correlationId when none is provided`, () => {
+  it(`should generate a stored_information when none is provided`, () => {
     return request(app.getHttpServer())
       .get('/cats')
       .expect(500)
       .expect((res) => {
         expect(res.body).toEqual({
           path: '/cats',
-          correlationId: expect.any(String),
           method: 'GET',
           status: 500,
           message: 'FakeController',
           time: expect.any(String),
+          stored_information: expect.objectContaining({
+            requestId: expect.any(String),
+            ipAddress: expect.any(String),
+            requestBody: expect.any(Object),
+            requestMethod: 'GET',
+            requestUrl: '/cats',
+            userAgent: expect.any(String),
+            timestamp: expect.any(String),
+            queryParams: expect.any(Object),
+          }),
         });
-        expect(res.body.correlationId).not.toEqual('');
+        expect(Object.keys(res.body.stored_information).length).toBeGreaterThan(0);
       });
   });
 
-  it('should attach correlationId from header when provided', async () => {
-    const testCorrelationId = 'test-correlation-id';
+  it('should attach stored_information from header when provided', async () => {
+    const testRequestId = 'test-request-id';
     const response = await request(app.getHttpServer())
       .get('/cats')
-      .set('x-correlation-id', testCorrelationId)
+      .set('x-request-id', testRequestId)
       .expect(500);
-    expect(response.body).toHaveProperty('correlationId', testCorrelationId);
+    expect(response.body).toHaveProperty('stored_information');
+    expect(response.body.stored_information.requestId).toEqual(testRequestId);
+    expect(response.body.stored_information).toMatchObject({
+      requestId: testRequestId,
+      ipAddress: expect.any(String),
+      requestBody: expect.any(Object),
+      requestMethod: 'GET',
+      requestUrl: '/cats',
+      userAgent: expect.any(String),
+      timestamp: expect.any(String),
+      queryParams: expect.any(Object),
+    });
   });
 
   afterAll(async () => {
@@ -73,18 +93,18 @@ describe('GlobalExceptionFilter with AsyncLocalStorage disabled', () => {
     await app.init();
   });
 
-  it('should not attach correlationId even if provided in header', async () => {
-    const testCorrelationId = 'test-correlation-id';
+  it('should not attach stored_information even if provided in header', async () => {
+    const test_stored_information = 'test-request-id';
     const response = await request(app.getHttpServer())
       .get('/cats')
-      .set('x-correlation-id', testCorrelationId)
+      .set('x-request-id', test_stored_information)
       .expect(500);
-    expect(response.body).not.toHaveProperty('correlationId');
+    expect(response.body).not.toHaveProperty('stored_information');
   });
 
-  it('should not attach correlationId when none is provided', async () => {
+  it('should not attach stored_information when none is provided', async () => {
     const response = await request(app.getHttpServer()).get('/cats').expect(500);
-    expect(response.body).not.toHaveProperty('correlationId');
+    expect(response.body).not.toHaveProperty('stored_information');
   });
 
   afterAll(async () => {
