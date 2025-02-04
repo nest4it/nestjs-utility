@@ -36,6 +36,11 @@ export type ErrorInterceptorModuleConfig = {
   slackWebhook?: SlackWebhookConfig;
 
   /**
+   * A flag that indicates whether the async local storage should be enabled.
+   */
+  enableAsyncLocalStorage?: boolean;
+
+  /**
    * A function that is called when an unauthorized exception is thrown.
    *
    * @param exception Defines the base Nest HTTP exception, which is handled by the default Exceptions Handler.
