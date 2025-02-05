@@ -12,7 +12,7 @@ describe('ErrorInterceptorModule', () => {
       imports: [
         ErrorInterceptorModule.register({
           logErrors: true,
-          enableAsyncLocalStorage: true,
+          useUniqueRequestId: true,
         }),
       ],
       controllers: [FakeController],
@@ -35,13 +35,6 @@ describe('ErrorInterceptorModule', () => {
           time: expect.any(String),
           stored_information: expect.objectContaining({
             requestId: expect.any(String),
-            ipAddress: expect.any(String),
-            requestBody: expect.any(Object),
-            requestMethod: 'GET',
-            requestUrl: '/cats',
-            userAgent: expect.any(String),
-            timestamp: expect.any(String),
-            queryParams: expect.any(Object),
           }),
         });
         expect(Object.keys(res.body.stored_information).length).toBeGreaterThan(0);
@@ -58,13 +51,6 @@ describe('ErrorInterceptorModule', () => {
     expect(response.body.stored_information.requestId).toEqual(testRequestId);
     expect(response.body.stored_information).toMatchObject({
       requestId: testRequestId,
-      ipAddress: expect.any(String),
-      requestBody: expect.any(Object),
-      requestMethod: 'GET',
-      requestUrl: '/cats',
-      userAgent: expect.any(String),
-      timestamp: expect.any(String),
-      queryParams: expect.any(Object),
     });
   });
 
@@ -80,7 +66,7 @@ describe('GlobalExceptionFilter with AsyncLocalStorage disabled', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         ErrorInterceptorModule.register({
-          enableAsyncLocalStorage: false,
+          useUniqueRequestId: false,
           logErrors: false,
           logFailures: false,
           customErrorToStatusCodeMap: new Map(),
