@@ -38,7 +38,7 @@ export type ErrorInterceptorModuleConfig = {
   /**
    * A flag that indicates whether the async local storage should be enabled.
    */
-  enableAsyncLocalStorage?: boolean;
+  useUniqueRequestId?: boolean;
 
   /**
    * A function that is called when an unauthorized exception is thrown.
