@@ -92,7 +92,7 @@ export const createLogLine = (
     method: string;
     path: string;
     status: number;
-    stored_information: any | null;
+    stored_information: Record<string, any> | null;
     stack: string;
     severity: string;
   },
