@@ -1,4 +1,5 @@
 import { type ArgumentsHost, HttpException } from '@nestjs/common';
+import { AsyncLocalStorage } from 'async_hooks';
 
 export type ExceptionObj = ReturnType<typeof createExceptionObj>;
 
@@ -29,6 +30,16 @@ export const getErrorResponse = (exception: HttpException | Error) => {
 
 export const getStatus = (exception: HttpException | Error) =>
   exception instanceof HttpException ? exception.getStatus() : 500;
+
+export const getRequestId = (asyncLocalStorage: AsyncLocalStorage<Map<string, any>>) => {
+  const store = asyncLocalStorage.getStore();
+  if (!store) {
+    return {};
+  }
+  return {
+    requestId: store.get('requestId') ?? null,
+  };
+};
 
 export const createExceptionObj = (
   exception: HttpException | Error,
