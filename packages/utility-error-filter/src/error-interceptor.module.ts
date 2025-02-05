@@ -31,7 +31,7 @@ export class ErrorInterceptorModule
     super();
   }
   configure(consumer: MiddlewareConsumer) {
-    if (this.options.enableAsyncLocalStorage) {
+    if (this.options.useUniqueRequestId) {
       consumer.apply(AsyncLocalStorageMiddleware).forRoutes('*');
     }
   }

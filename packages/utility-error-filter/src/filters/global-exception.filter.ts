@@ -16,6 +16,7 @@ import {
   toExceptionResponse,
   isRecoverable,
   isInternalError,
+  getRequestId,
 } from './utils';
 import { HttpAdapterHost } from '@nestjs/core';
 import { IncomingWebhook } from '@slack/webhook';
@@ -40,25 +41,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   async catch(exception: Error | HttpException, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
 
-    let requestId: string | null = null;
-    let ipAddress: string | null = null;
-    let requestBody: any | null = null;
-    let requestMethod: string | null = null;
-    let requestUrl: string | null = null;
-    let userAgent: string | null = null;
-    let timestamp: string | null = null;
-    let queryParams: any | null = null;
-
-    if (this.options.enableAsyncLocalStorage) {
-      const store = this.asyncLocalStorage.getStore();
-      requestId = store ? store.get('requestId') : null;
-      ipAddress = store ? store.get('ipAddress') : null;
-      requestBody = store ? store.get('requestBody') : null;
-      requestMethod = store ? store.get('requestMethod') : null;
-      requestUrl = store ? store.get('requestUrl') : null;
-      userAgent = store ? store.get('userAgent') : null;
-      timestamp = store ? store.get('timestamp') : null;
-      queryParams = store ? store.get('queryParams') : null;
+    let stored_information = {};
+    if (this.options.useUniqueRequestId) {
+      stored_information = getRequestId(this.asyncLocalStorage);
     }
 
     const err = createExceptionObj(
@@ -67,17 +52,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.options.customErrorToStatusCodeMap || new Map(),
     );
 
-    if (this.options.enableAsyncLocalStorage) {
-      err.stored_information = {
-        requestId: requestId,
-        ipAddress: ipAddress,
-        requestBody: requestBody,
-        requestMethod: requestMethod,
-        requestUrl: requestUrl,
-        userAgent: userAgent,
-        timestamp: timestamp,
-        queryParams: queryParams,
-      };
+    if (this.options.useUniqueRequestId) {
+      err.stored_information = stored_information;
     }
 
     if (exception instanceof UnauthorizedException) {
@@ -104,7 +80,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       }
     }
     const baseResponse = toExceptionResponse(err);
-    const responseBody = this.options.enableAsyncLocalStorage
+    const responseBody = this.options.useUniqueRequestId
       ? { ...baseResponse, stored_information: err.stored_information }
       : baseResponse;
 
