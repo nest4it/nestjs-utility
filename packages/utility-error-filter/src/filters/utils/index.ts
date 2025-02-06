@@ -1,7 +1,8 @@
 import { type ArgumentsHost, HttpException } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
+import { ErrorInterceptorModuleConfig } from '../../models';
 
-export type ExceptionObj = ReturnType<typeof createExceptionObj>;
+export type ExceptionObj = ReturnType<ReturnType<typeof makeCreateExceptionObj>>;
 
 export const isString = (value: unknown): value is string => typeof value === 'string';
 
@@ -41,34 +42,39 @@ export const getRequestId = (asyncLocalStorage: AsyncLocalStorage<Map<string, an
   };
 };
 
-export const createExceptionObj = (
-  exception: HttpException | Error,
-  host: ArgumentsHost,
-  customErrorToStatusCodeMap: Map<string, number>,
-) => {
-  const ctx = host.switchToHttp();
-  const response = ctx.getResponse();
-  const request = ctx.getRequest();
+export const makeCreateExceptionObj =
+  (
+    options: ErrorInterceptorModuleConfig,
+    asyncLocalStorage: AsyncLocalStorage<Map<string, any>>,
+  ) =>
+  (
+    exception: HttpException | Error,
+    host: ArgumentsHost,
+    customErrorToStatusCodeMap: Map<string, number>,
+  ) => {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse();
+    const request = ctx.getRequest();
 
-  const stack = exception.stack ?? exception.cause;
+    const stack = exception.stack ?? exception.cause;
 
-  return {
-    time: new Date().toISOString(),
-    path: request.path,
-    method: request.method,
-    message: getErrorResponse(exception) ?? 'Internal Server Error',
-    stored_information: null,
-    error: response.error,
-    status:
-      customErrorToStatusCodeMap.get(exception.name) ??
-      getStatus(exception) ??
-      response.statusCode ??
-      500,
+    return {
+      time: new Date().toISOString(),
+      path: request.path,
+      method: request.method,
+      message: getErrorResponse(exception) ?? 'Internal Server Error',
+      error: response.error,
+      requestId: options.useUniqueRequestId ? getRequestId(asyncLocalStorage) : undefined,
+      status:
+        customErrorToStatusCodeMap.get(exception.name) ??
+        getStatus(exception) ??
+        response.statusCode ??
+        500,
 
-    stack: JSON.stringify(stack ? { stack } : {}),
-    res: response,
+      stack: JSON.stringify(stack ? { stack } : {}),
+      res: response,
+    };
   };
-};
 
 export const toExceptionResponse = (err: ExceptionObj) => ({
   path: err.path,
@@ -92,7 +98,7 @@ export const createLogLine = (
     method: string;
     path: string;
     status: number;
-    stored_information: Record<string, any> | null;
+    requestId: Record<string, any> | null;
     stack: string;
     severity: string;
   },
@@ -103,7 +109,7 @@ export const createLogLine = (
     method: err.method,
     path: err.path,
     status: err.status,
-    stored_information: err.stored_information,
+    requestId: err.requestId,
     stack: err.stack,
     severity,
   },

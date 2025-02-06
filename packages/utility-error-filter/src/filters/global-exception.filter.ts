@@ -12,7 +12,7 @@ import { MODULE_OPTIONS_TOKEN } from '../error-interceptor.configure-module';
 import { ErrorInterceptorModuleConfig } from '../models';
 import {
   createLogLine,
-  createExceptionObj,
+  makeCreateExceptionObj,
   toExceptionResponse,
   isRecoverable,
   isInternalError,
@@ -29,6 +29,7 @@ import { AsyncLocalStorage } from 'async_hooks';
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
+  private createExceptionObj: ReturnType<typeof makeCreateExceptionObj>;
 
   constructor(
     @Inject(MODULE_OPTIONS_TOKEN) private options: ErrorInterceptorModuleConfig,
@@ -36,24 +37,29 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     private readonly asyncLocalStorage: AsyncLocalStorage<Map<string, any>>,
     @Inject(SLACK_CLIENT) private client: IncomingWebhook,
     private readonly httpAdapterHost: HttpAdapterHost,
-  ) {}
+  ) {
+    this.createExceptionObj = makeCreateExceptionObj(
+      this.options,
+      this.asyncLocalStorage,
+    );
+  }
 
   async catch(exception: Error | HttpException, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
 
-    let stored_information = {};
+    let requestId = {};
     if (this.options.useUniqueRequestId) {
-      stored_information = getRequestId(this.asyncLocalStorage);
+      requestId = getRequestId(this.asyncLocalStorage);
     }
 
-    const err = createExceptionObj(
+    const err = this.createExceptionObj(
       exception,
       host,
       this.options.customErrorToStatusCodeMap || new Map(),
     );
 
     if (this.options.useUniqueRequestId) {
-      err.stored_information = stored_information;
+      err.requestId = requestId;
     }
 
     if (exception instanceof UnauthorizedException) {
@@ -81,7 +87,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
     const baseResponse = toExceptionResponse(err);
     const responseBody = this.options.useUniqueRequestId
-      ? { ...baseResponse, stored_information: err.stored_information }
+      ? { ...baseResponse, requestId: err.requestId }
       : baseResponse;
 
     httpAdapter.reply(err.res, responseBody, err.status);
