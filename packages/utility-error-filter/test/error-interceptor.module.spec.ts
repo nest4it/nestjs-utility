@@ -22,7 +22,7 @@ describe('ErrorInterceptorModule', () => {
     await app.init();
   });
 
-  it(`should generate a stored_information when none is provided`, () => {
+  it(`should generate a requestId when none is provided`, () => {
     return request(app.getHttpServer())
       .get('/cats')
       .expect(500)
@@ -33,23 +33,23 @@ describe('ErrorInterceptorModule', () => {
           status: 500,
           message: 'FakeController',
           time: expect.any(String),
-          stored_information: expect.objectContaining({
+          requestId: expect.objectContaining({
             requestId: expect.any(String),
           }),
         });
-        expect(Object.keys(res.body.stored_information).length).toBeGreaterThan(0);
+        expect(Object.keys(res.body.requestId).length).toBeGreaterThan(0);
       });
   });
 
-  it('should attach stored_information from header when provided', async () => {
+  it('should attach requestId from header when provided', async () => {
     const testRequestId = 'test-request-id';
     const response = await request(app.getHttpServer())
       .get('/cats')
       .set('x-request-id', testRequestId)
       .expect(500);
-    expect(response.body).toHaveProperty('stored_information');
-    expect(response.body.stored_information.requestId).toEqual(testRequestId);
-    expect(response.body.stored_information).toMatchObject({
+    expect(response.body).toHaveProperty('requestId');
+    expect(response.body.requestId.requestId).toEqual(testRequestId);
+    expect(response.body.requestId).toMatchObject({
       requestId: testRequestId,
     });
   });
@@ -79,18 +79,18 @@ describe('GlobalExceptionFilter with AsyncLocalStorage disabled', () => {
     await app.init();
   });
 
-  it('should not attach stored_information even if provided in header', async () => {
-    const test_stored_information = 'test-request-id';
+  it('should not attach requestId even if provided in header', async () => {
+    const test_requestId = 'test-request-id';
     const response = await request(app.getHttpServer())
       .get('/cats')
-      .set('x-request-id', test_stored_information)
+      .set('x-request-id', test_requestId)
       .expect(500);
-    expect(response.body).not.toHaveProperty('stored_information');
+    expect(response.body).not.toHaveProperty('requestId');
   });
 
-  it('should not attach stored_information when none is provided', async () => {
+  it('should not attach requestId when none is provided', async () => {
     const response = await request(app.getHttpServer()).get('/cats').expect(500);
-    expect(response.body).not.toHaveProperty('stored_information');
+    expect(response.body).not.toHaveProperty('requestId');
   });
 
   afterAll(async () => {
