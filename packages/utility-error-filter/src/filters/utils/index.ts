@@ -23,10 +23,8 @@ export const getErrorResponse = (exception: HttpException | Error) => {
   }
 
   if (isObject(exResponse)) {
-    return exResponse.message || exResponse.error;
+    return exResponse.message || exResponse.error || 'Unknown error';
   }
-
-  return 'Internal Server Error';
 };
 
 export const getStatus = (exception: HttpException | Error) =>
@@ -63,7 +61,7 @@ export const makeCreateExceptionObj =
       path: request.path,
       method: request.method,
       message: getErrorResponse(exception) ?? 'Internal Server Error',
-      error: response.error,
+      error: response.error, // is this needed, as response is provided in line 73?
       requestId: options.useUniqueRequestId ? getRequestId(asyncLocalStorage) : undefined,
       status:
         customErrorToStatusCodeMap.get(exception.name) ??
@@ -81,6 +79,7 @@ export const toExceptionResponse = (err: ExceptionObj) => ({
   method: err.method,
   status: err.status,
   message: err.message,
+  // requestId: err.requestId || null,
   error: err.res.error,
   time: err.time,
 });
