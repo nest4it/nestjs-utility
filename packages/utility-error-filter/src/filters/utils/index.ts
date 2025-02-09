@@ -23,10 +23,8 @@ export const getErrorResponse = (exception: HttpException | Error) => {
   }
 
   if (isObject(exResponse)) {
-    return exResponse.message || exResponse.error;
+    return exResponse.message || exResponse.error || 'Unknown error';
   }
-
-  return 'Internal Server Error';
 };
 
 export const getStatus = (exception: HttpException | Error) =>
