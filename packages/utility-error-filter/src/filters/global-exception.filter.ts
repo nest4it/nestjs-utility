@@ -47,10 +47,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   async catch(exception: Error | HttpException, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
 
-    let requestId = {};
-    if (this.options.useUniqueRequestId) {
-      requestId = getRequestId(this.asyncLocalStorage);
-    }
+    // let requestId = {};
+    // if (this.options.useUniqueRequestId) {
+    //   requestId = getRequestId(this.asyncLocalStorage);
+    // }
 
     const err = this.createExceptionObj(
       exception,
@@ -58,9 +58,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.options.customErrorToStatusCodeMap || new Map(),
     );
 
-    if (this.options.useUniqueRequestId) {
-      err.requestId = requestId;
-    }
+    // if (this.options.useUniqueRequestId) {
+    //   err.requestId = requestId;
+    // }
 
     if (exception instanceof UnauthorizedException) {
       await this.options.onUnauthorized?.(exception, host);
