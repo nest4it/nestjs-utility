@@ -12,7 +12,7 @@ import { MODULE_OPTIONS_TOKEN } from '../error-interceptor.configure-module';
 import { ErrorInterceptorModuleConfig } from '../models';
 import {
   createLogLine,
-  createExceptionObj,
+  makeCreateExceptionObj,
   toExceptionResponse,
   isRecoverable,
   isInternalError,
@@ -21,21 +21,32 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { IncomingWebhook } from '@slack/webhook';
 import { SLACK_CLIENT } from '../constants';
 import { createErrorAlert, createFailureAlert } from './utils/alerts';
+import { ASYNC_LOCAL_STORAGE } from '../providers/async-local-storage.provider';
+import { AsyncLocalStorage } from 'async_hooks';
 
 @Injectable()
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
+  private createExceptionObj: ReturnType<typeof makeCreateExceptionObj>;
 
   constructor(
     @Inject(MODULE_OPTIONS_TOKEN) private options: ErrorInterceptorModuleConfig,
+    @Inject(ASYNC_LOCAL_STORAGE)
+    private readonly asyncLocalStorage: AsyncLocalStorage<Map<string, any>>,
     @Inject(SLACK_CLIENT) private client: IncomingWebhook,
     private readonly httpAdapterHost: HttpAdapterHost,
-  ) {}
+  ) {
+    this.createExceptionObj = makeCreateExceptionObj(
+      this.options,
+      this.asyncLocalStorage,
+    );
+  }
 
   async catch(exception: Error | HttpException, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
-    const err = createExceptionObj(
+
+    const err = this.createExceptionObj(
       exception,
       host,
       this.options.customErrorToStatusCodeMap || new Map(),
@@ -64,7 +75,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         await this.client.send(createErrorAlert(err)).catch(() => null);
       }
     }
+    const baseResponse = toExceptionResponse(err);
+    const responseBody = this.options.useUniqueRequestId
+      ? { ...baseResponse, requestId: err.requestId }
+      : baseResponse;
 
-    httpAdapter.reply(err.res, toExceptionResponse(err), err.status);
+    httpAdapter.reply(err.res, responseBody, err.status);
   }
 }
