@@ -16,7 +16,6 @@ import {
   toExceptionResponse,
   isRecoverable,
   isInternalError,
-  getRequestId,
 } from './utils';
 import { HttpAdapterHost } from '@nestjs/core';
 import { IncomingWebhook } from '@slack/webhook';
@@ -47,20 +46,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   async catch(exception: Error | HttpException, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
 
-    // let requestId = {};
-    // if (this.options.useUniqueRequestId) {
-    //   requestId = getRequestId(this.asyncLocalStorage);
-    // }
-
     const err = this.createExceptionObj(
       exception,
       host,
       this.options.customErrorToStatusCodeMap || new Map(),
     );
-
-    // if (this.options.useUniqueRequestId) {
-    //   err.requestId = requestId;
-    // }
 
     if (exception instanceof UnauthorizedException) {
       await this.options.onUnauthorized?.(exception, host);
