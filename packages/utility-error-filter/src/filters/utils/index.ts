@@ -61,7 +61,7 @@ export const makeCreateExceptionObj =
       path: request.path,
       method: request.method,
       message: getErrorResponse(exception) ?? 'Internal Server Error',
-      error: response.error, // is this needed, as response is provided in line 73?
+      error: response.error,
       requestId: options.useUniqueRequestId ? getRequestId(asyncLocalStorage) : undefined,
       status:
         customErrorToStatusCodeMap.get(exception.name) ??
@@ -79,7 +79,6 @@ export const toExceptionResponse = (err: ExceptionObj) => ({
   method: err.method,
   status: err.status,
   message: err.message,
-  // requestId: err.requestId || null,
   error: err.res.error,
   time: err.time,
 });
