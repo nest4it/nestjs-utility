@@ -4,6 +4,19 @@ import { ErrorInterceptorModuleConfig } from '../../models';
 
 export type ExceptionObj = ReturnType<ReturnType<typeof makeCreateExceptionObj>>;
 
+export const serializeError = (error: unknown) => {
+  if (!(error instanceof Error)) {
+    return error;
+  }
+
+  return {
+    name: error.name,
+    message: error.message,
+    stack: error.stack,
+    cause: error.cause ? serializeError(error?.cause) : undefined,
+  };
+};
+
 export const isString = (value: unknown): value is string => typeof value === 'string';
 
 export const isArray = (value: unknown): value is unknown[] => Array.isArray(value);
@@ -106,7 +119,7 @@ export const createLogLine = (
   err.message,
   err.stack,
   {
-    cause: err.cause,
+    cause: serializeError(err.cause),
     method: err.method,
     path: err.path,
     status: err.status,
