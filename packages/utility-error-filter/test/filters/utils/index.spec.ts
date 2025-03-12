@@ -149,6 +149,7 @@ describe('toExceptionResponse', () => {
 
   beforeEach(() => {
     mockException = {
+      cause: new Error('Mocked error'),
       path: '/test-endpoint',
       method: 'POST',
       status: 500,
@@ -195,6 +196,7 @@ describe('createLogLine', () => {
 
   beforeEach(() => {
     mockException = {
+      cause: new Error('Mocked error'),
       path: '/test-endpoint',
       method: 'POST',
       status: 500,
@@ -215,6 +217,7 @@ describe('createLogLine', () => {
       'Test error occurred',
       'Mocked stack trace',
       {
+        cause: new Error('Mocked error'),
         method: 'POST',
         path: '/test-endpoint',
         status: 500,
@@ -234,6 +237,7 @@ describe('createLogLine', () => {
       'Test error occurred',
       'Mocked stack trace',
       {
+        cause: new Error('Mocked error'),
         method: 'POST',
         path: '/test-endpoint',
         status: 500,
