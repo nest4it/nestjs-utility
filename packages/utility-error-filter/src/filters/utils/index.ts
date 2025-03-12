@@ -57,6 +57,7 @@ export const makeCreateExceptionObj =
     const stack = exception.stack ?? exception.cause;
 
     return {
+      cause: exception.cause as Error | undefined,
       time: new Date().toISOString(),
       path: request.path,
       method: request.method,
@@ -99,11 +100,13 @@ export const createLogLine = (
     requestId: Record<string, any> | null;
     stack: string;
     severity: string;
+    cause: Error | undefined;
   },
 ] => [
   err.message,
   err.stack,
   {
+    cause: err.cause,
     method: err.method,
     path: err.path,
     status: err.status,
