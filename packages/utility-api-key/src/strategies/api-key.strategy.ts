@@ -3,7 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import Strategy from 'passport-headerapikey';
 import { API_KEY_MODULE_STRATEGY } from '../constants';
 import { ApiKeyService } from '../api-key.service';
-import type { Function } from 'ts-toolbelt';
 import type { ApiKeyModuleConfig } from '../models/config';
 import { MODULE_OPTIONS_TOKEN } from '../api-key.configure-module';
 import { DEFAULTS } from '../constants/defaults';
@@ -23,17 +22,11 @@ export class ApiKeyStrategy extends PassportStrategy(Strategy, API_KEY_MODULE_ST
     );
   }
 
-  public async validate(apiKey: string, done: Function.Function) {
-    return this.tokenService
-      .verifyApiKey(apiKey)
-      .then((user) => done(null, user))
-      .catch((err) => {
-        done(
-          new UnauthorizedException({
-            cause: err,
-          }),
-          null,
-        );
+  public async validate(apiKey: string) {
+    return this.tokenService.verifyApiKey(apiKey).catch((err) => {
+      new UnauthorizedException({
+        cause: err,
       });
+    });
   }
 }
