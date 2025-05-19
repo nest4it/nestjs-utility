@@ -1,6 +1,6 @@
 {
   "name": "@n4it/utility-slack-alerts",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "Sending Slack alerts from NestJS",
   "main": "./dist/index.js",
   "scripts": {
