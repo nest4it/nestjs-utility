@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import type { StringValue } from 'ms';
 import { createProviders, type JwtProvider } from './utils';
 import type { ApiKeyModuleConfig } from './models/config';
 import { MODULE_OPTIONS_TOKEN } from './api-key.configure-module';
@@ -21,7 +22,7 @@ export class ApiKeyService {
    * @param expiresIn expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"
    * @returns a jwt token
    */
-  async createApiKey(data: Record<string, unknown>, expiresIn?: string | number) {
+  async createApiKey(data: Record<string, unknown>, expiresIn?: StringValue | number) {
     return this.jwtProvider.createJwtToken(data, expiresIn ?? this.options.expiresIn);
   }
 

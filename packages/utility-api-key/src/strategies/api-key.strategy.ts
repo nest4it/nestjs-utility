@@ -8,8 +8,6 @@ import type { ApiKeyModuleConfig } from '../models/config';
 import { MODULE_OPTIONS_TOKEN } from '../api-key.configure-module';
 import { DEFAULTS } from '../constants/defaults';
 
-type ValidateFn = (apiKey: string, done: Function.Function) => void;
-
 @Injectable()
 export class ApiKeyStrategy extends PassportStrategy(Strategy, API_KEY_MODULE_STRATEGY) {
   constructor(
@@ -22,7 +20,6 @@ export class ApiKeyStrategy extends PassportStrategy(Strategy, API_KEY_MODULE_ST
         prefix: options.apiKeyHeaderPrefix ?? DEFAULTS.apiKeyHeaderPrefix,
       },
       true,
-      async (apiKey: string, done: ValidateFn) => this.validate(apiKey, done),
     );
   }
 
